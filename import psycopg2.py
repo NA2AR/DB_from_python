@@ -43,31 +43,29 @@ def change_client(conn, client_id, first_name=None, last_name=None, email=None):
         if first_name != None:
             cur.execute("""
                         UPDATE info 
-                        SET first_name = %s,
+                        SET first_name = %s
                         WHERE id = %s;
                         """,(first_name, client_id))
-            conn.commit()
         if last_name != None:
             cur.execute("""
                         UPDATE info 
-                        SET lastt_name = %s,
+                        SET last_name = %s
                         WHERE id = %s;
                         """,(last_name, client_id))
-            conn.commit()
+
         if email != None:
             cur.execute("""
                         UPDATE info 
                         SET email = %s,
                         WHERE id = %s;
                         """,(email, client_id))
-            conn.commit()
 
 def change_phone(conn, client_id, phone):
     with conn.cursor() as cur:
         cur.execute("""
                     UPDATE phones
-                    SET phone = %s,
-                    WHEREclient_id  = %s;
+                    SET phone = %s
+                    WHERE client_id  = %s;
                     """,(phone, client_id))
         conn.commit()
 
@@ -83,26 +81,26 @@ def delete_client(conn, client_id):
     with conn.cursor() as cur:
         cur.execute("""
                     DELETE FROM info
-                    WHERE client_id = %s
+                    WHERE id = %s
                     """,(client_id))
-    conn.commit()
 
 def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
     with conn.cursor() as cur:
         cur.execute("""
-                    SELECT FROM info    
-                    WHERE first_name = %s
-                    """,(first_name,))
-    conn.commit()
+                    SELECT * FROM info  
+                    WHERE first_name = %s AND last_name = %s AND email = %s            
+                    """,(first_name, last_name, email))
+        print(cur.fetchall())
 
 
 with psycopg2.connect(database="db_python", user="postgres", password="rfhfrfnbwf1975") as conn:
     create_db(conn)
     add_client(conn, 'Ivan','Vanko','IvV@mail.py')
     add_phone(conn, '1', '11111111')
-    change_client(conn, '1', None ,'Volkov', None)
-    change_phone()
-    delete_phone()
-    delete_client()
+    change_client(conn, '1', 'Oleg' ,'Volkov', None)
+    change_phone(conn,'1','2222222')
+    delete_phone(conn,'1', '2222222')
+    delete_client(conn,'1')
+    find_client(conn, 'Oleg')
 conn.close()
 
